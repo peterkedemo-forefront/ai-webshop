@@ -1,0 +1,33 @@
+# Common
+- Only add dependencies to the root package.json if they are truly shared by all workspaces.
+- Always read the README.md and referenced README:s.
+- When making changes to the codebase, always update the README or other documentation to reflect those changes.
+
+# Frontend
+
+- All frontend dependencies (including devDependencies) must be added to client/package.json, not the root or other workspace package.json files.
+- Always use `npm install --workspace client <package>` to add frontend dependencies, or run `npm install` from the `client/` directory.
+- After installing, always verify that dependencies are listed in client/package.json and not in the root.
+- Use the information in client/README.md to understand frontend conventions, setup, and architecture.
+- After any code change that introduces a new dependency, architectural pattern, or workflow (such as a new library, major refactor, or new convention), you must update client/README.md to reflect this, unless it is already documented. This includes, but is not limited to:
+  - Adding or removing major dependencies (e.g., TanStack Query, React Router, etc.)
+  - Changing how data fetching, state management, or routing works
+  - Introducing new build tools, scripts, or development workflows
+  - Any change that would affect onboarding or day-to-day development for new contributors
+  - Always scan the README for relevant sections and update or add information as needed.
+  - If in doubt, err on the side of updating the README.
+
+
+# Backend
+
+- All backend dependencies (including devDependencies) must be added to server/package.json, not the root or other workspace package.json files.
+- Always use `npm install --workspace server <package>` to add backend dependencies, or run `npm install` from the `server/` directory.
+- After installing, always verify that dependencies are listed in server/package.json and not in the root.
+- Use the information in server/README.md to understand backend conventions, setup, and architecture.
+- After any code change that introduces a new dependency, architectural pattern, or workflow (such as a new library, major refactor, or new convention), you must update server/README.md to reflect this, unless it is already documented. This includes, but is not limited to:
+  - Adding or removing major dependencies (e.g., Express, Prisma, etc.)
+  - Changing how data fetching, state management, or routing works
+  - Introducing new build tools, scripts, or development workflows
+  - Any change that would affect onboarding or day-to-day development for new contributors
+  - Always scan the README for relevant sections and update or add information as needed.
+  - If in doubt, err on the side of updating the README.
