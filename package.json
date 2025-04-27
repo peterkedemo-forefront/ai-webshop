@@ -1,0 +1,23 @@
+{
+  "name": "webshop",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=client\" \"npm run dev --workspace=server\"",
+    "build": "cd client && npm run build",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "npm run test --workspaces"
+  },
+  "devDependencies": {
+    "@types/supertest": "^6.0.3",
+    "concurrently": "^8.2.2",
+    "prettier": "^3.5.3"
+  }
+}
