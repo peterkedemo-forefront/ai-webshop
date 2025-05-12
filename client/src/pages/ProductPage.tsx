@@ -12,7 +12,7 @@ export default function ProductPage({ addToCart }: ProductPageProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { product, isLoading, error } = useProduct(id);
+  const { data: product, isLoading, error } = useProduct(id);
 
   if (isLoading) {
     return (

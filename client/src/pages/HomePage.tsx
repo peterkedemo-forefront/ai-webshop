@@ -8,7 +8,7 @@ interface HomePageProps {
 }
 
 export default function HomePage({ addToCart }: HomePageProps) {
-  const { products, isLoading, error } = useProducts();
+  const { data: products, isLoading, error } = useProducts();
 
   if (isLoading) {
     return (
@@ -36,7 +36,7 @@ export default function HomePage({ addToCart }: HomePageProps) {
       <Text c="dimmed" mb="xl">
         Browse our collection of high-quality products
       </Text>
-      <ProductList products={products} onAddToCart={addToCart} title="Featured Products" />
+      <ProductList products={products || []} onAddToCart={addToCart} title="Featured Products" />
     </Container>
   );
 }

@@ -104,3 +104,21 @@ client/
 
 - If you see a blank page or errors, check the browser console for details.
 - Ensure all dependencies are installed and you are using a compatible Node.js version.
+
+## Data Fetching & State Management
+
+### TanStack Query (React Query)
+
+This project uses [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) (formerly React Query) for all data fetching and server state management in the frontend.
+
+- **Where:** All data fetching and mutations are handled via TanStack Query in custom hooks (e.g., `useProduct`, `useProducts`, `useCart`).
+- **How:**
+  - Use `useQuery` for fetching data (see `src/hooks/useProduct.ts`, `src/hooks/useProducts.ts`).
+  - Use `useMutation` for actions that change data (see `src/hooks/useCart.ts`).
+  - The `QueryClientProvider` is set up in `src/main.tsx`.
+- **Conventions:**
+  - Always use the object syntax for `useQuery` and `useMutation` (see TanStack Query v5 docs).
+  - Use query keys that reflect the resource and parameters (e.g., `['product', id]`).
+  - Invalidate or refetch queries after mutations to keep data in sync.
+  - Prefer colocating data-fetching logic in hooks in `src/hooks/`.
+- **Docs:** See [TanStack Query React Docs](https://tanstack.com/query/latest/docs/framework/react/overview) for more details and advanced usage.

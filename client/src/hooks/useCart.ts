@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createCart,
   getCart,
@@ -9,17 +10,11 @@ import { Product, Cart } from '../types/Product';
 
 const CART_ID_KEY = 'cartId';
 
-function useCartState() {
+function useCartId() {
   const [cartId, setCartId] = useState<string | null>(null);
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
-  // Effect 1: Ensure cartId exists in state (from localStorage or by creating)
   useEffect(() => {
-    if (cartId !== null) {
-      return;
-    }
+    if (cartId !== null) return;
     const ensureCartId = async () => {
       let id = localStorage.getItem(CART_ID_KEY);
       if (!id) {
@@ -32,89 +27,78 @@ function useCartState() {
     ensureCartId();
   }, [cartId]);
 
-  // Effect 2: Fetch cart when cartId changes
-  const fetchCart = useCallback(async () => {
-    if (!cartId) {
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    try {
-      const cartData = await getCart(cartId);
-      setCart(cartData);
-    } catch (err) {
-      if (err instanceof Error && err.name === 'NotFoundError') {
-        localStorage.removeItem(CART_ID_KEY);
-        setCartId(null); // triggers Effect 1 to create a new cartId
-      } else {
-        setError(err as Error);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [cartId]);
-
-  useEffect(() => {
-    fetchCart();
-  }, [cartId, fetchCart]);
-
-  // refetch just re-fetches the cart with the current cartId
-  const refetch = useCallback(() => {
-    fetchCart();
-  }, [fetchCart]);
-
-  const clearCart = useCallback(() => {
+  const clearCartId = useCallback(() => {
     localStorage.removeItem(CART_ID_KEY);
     setCartId(null);
-    setCart(null);
   }, []);
 
-  return { cart, cartId, isLoading, error, refetch, setCartId, setCart, clearCart };
+  return { cartId, setCartId, clearCartId };
 }
 
 export function useCart() {
-  const { cart, cartId, isLoading, error, refetch, clearCart } = useCartState();
+  const { cartId, clearCartId } = useCartId();
+  const queryClient = useQueryClient();
+
+  const {
+    data: cart,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<Cart, Error>({
+    queryKey: ['cart', cartId],
+    queryFn: () => getCart(cartId!),
+    enabled: !!cartId,
+    retry: false,
+  });
+
+  // Handle NotFoundError by clearing cartId
+  useEffect(() => {
+    if (error && error.name === 'NotFoundError') {
+      clearCartId();
+    }
+  }, [error, clearCartId]);
 
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<Error | null>(null);
 
   const addOrUpdateCartItem = useCallback(
     async (product: Product, quantity: number) => {
-      if (!cartId) {
-        return;
-      }
+      if (!cartId) return;
       setActionLoading(true);
       setActionError(null);
       try {
         await apiAddOrUpdateCartItem(cartId, product.id, quantity);
-        refetch();
+        await queryClient.invalidateQueries({ queryKey: ['cart', cartId] });
       } catch (err) {
         setActionError(err as Error);
       } finally {
         setActionLoading(false);
       }
     },
-    [cartId, refetch]
+    [cartId, queryClient]
   );
 
   const removeCartItem = useCallback(
     async (productId: string) => {
-      if (!cartId) {
-        return;
-      }
+      if (!cartId) return;
       setActionLoading(true);
       setActionError(null);
       try {
         await apiRemoveCartItem(cartId, productId);
-        refetch();
+        await queryClient.invalidateQueries({ queryKey: ['cart', cartId] });
       } catch (err) {
         setActionError(err as Error);
       } finally {
         setActionLoading(false);
       }
     },
-    [cartId, refetch]
+    [cartId, queryClient]
   );
+
+  const clearCart = useCallback(() => {
+    clearCartId();
+    queryClient.removeQueries({ queryKey: ['cart', cartId] });
+  }, [clearCartId, queryClient, cartId]);
 
   return {
     cart,
