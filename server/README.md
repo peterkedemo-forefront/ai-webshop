@@ -48,9 +48,50 @@ server/
 - Use Prettier and ESLint for code formatting and linting (see config files).
 - Add new routes in `src/routes/` and corresponding handlers in `src/controllers/`.
 - Use async/await for asynchronous code.
-- Validate all input data (e.g., with Zod).
+- Validate all input with Zod.
 - Place custom error classes in `src/errors/`.
 - Add middleware in `src/middleware/` and register in `src/index.ts`.
+
+## Orders API
+
+### POST /api/orders
+
+Creates a new order from a cart and customer information. Validates input with Zod.
+
+**Request body:**
+```json
+{
+  "cartId": "string",
+  "customer": {
+    "name": "string",
+    "email": "string",
+    "address": "string",
+    "city": "string",
+    "postalCode": "string",
+    "country": "string"
+  }
+}
+```
+
+- The backend will look up the cart by `cartId`, copy its items, and save a new order.
+- The cart is deleted after the order is placed.
+
+**Response:**
+```json
+{
+  "orderId": "string"
+}
+```
+
+### Order Model
+- `orderId` (string, unique): The order's unique identifier (UUID)
+- `cartId` (string): The cart this order was created from
+- `customer` (object): Customer info (name, email, address, city, postalCode, country)
+- `items` (array): List of products and quantities
+- `createdAt` (date): Timestamp
+
+### Validation
+- All input is validated with Zod in the controller before processing.
 
 ## Testing
 

@@ -24,6 +24,14 @@ It uses [Mantine](https://mantine.dev/) for UI components and styling, and [Reac
    npm run preview
    ```
 
+## Checkout Flow
+
+- The app now includes a checkout step, accessible via the `/checkout` route.
+- The checkout page displays a read-only cart summary and a shipping/contact form.
+- The form uses [Mantine Form](https://mantine.dev/form/use-form/) and [Zod](https://zod.dev/) for validation.
+- On submission, the form is validated with Zod before the order is sent to the backend.
+- New dependencies: `@mantine/form`, `zod` (see package.json).
+
 ## Folder Structure
 
 ```

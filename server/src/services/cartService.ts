@@ -75,3 +75,13 @@ export const removeCartItem = async (cartId: string, productId: string): Promise
   }
   throw new ProductNotInCartError();
 };
+
+export const clearCart = async (cartId: string): Promise<void> => {
+  await CartModel.deleteOne({ cartId });
+};
+
+export const getCartItems = async (cartId: string) => {
+  const cart = await CartModel.findOne({ cartId });
+  if (!cart) throw new CartNotFoundError();
+  return cart.items;
+};

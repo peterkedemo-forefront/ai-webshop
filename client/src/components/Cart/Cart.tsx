@@ -109,7 +109,7 @@ export function Cart({ items, onUpdateQuantity, onRemoveItem }: CartProps) {
             <Button component={Link} to="/" variant="outline">
               Continue Shopping
             </Button>
-            <Button color="green">Checkout</Button>
+            <Button component={Link} to="/checkout" color="green">Checkout</Button>
           </Group>
         </Flex>
       </Paper>

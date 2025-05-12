@@ -63,11 +63,17 @@ function useCartState() {
     fetchCart();
   }, [fetchCart]);
 
-  return { cart, cartId, isLoading, error, refetch };
+  const clearCart = useCallback(() => {
+    localStorage.removeItem(CART_ID_KEY);
+    setCartId(null);
+    setCart(null);
+  }, []);
+
+  return { cart, cartId, isLoading, error, refetch, setCartId, setCart, clearCart };
 }
 
 export function useCart() {
-  const { cart, cartId, isLoading, error, refetch } = useCartState();
+  const { cart, cartId, isLoading, error, refetch, clearCart } = useCartState();
 
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<Error | null>(null);
@@ -112,10 +118,12 @@ export function useCart() {
 
   return {
     cart,
+    cartId,
     isLoading: isLoading || actionLoading,
     error: error || actionError,
     addOrUpdateCartItem,
     removeCartItem,
     refetch,
+    clearCart,
   };
 }

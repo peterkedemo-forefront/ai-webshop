@@ -4,6 +4,8 @@ import Header from './components/Header/Header';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import { useCart } from './hooks/useCart';
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
             />
           }
         />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
       </Routes>
     </BrowserRouter>
   );
