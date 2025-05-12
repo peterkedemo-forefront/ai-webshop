@@ -1,12 +1,15 @@
 import { Cart } from '../components/Cart/Cart';
-import { CartItem } from '../types/Product';
+import { useCart } from '../hooks/useCart';
 
-interface CartPageProps {
-  cartItems: CartItem[];
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
-}
+export default function CartPage() {
+  const { cart, addOrUpdateCartItem, removeCartItem } = useCart();
 
-export default function CartPage({ cartItems, updateQuantity, removeFromCart }: CartPageProps) {
-  return <Cart items={cartItems} onUpdateQuantity={updateQuantity} onRemoveItem={removeFromCart} />;
+  const updateQuantity = (productId: string, quantity: number) => {
+    const product = cart?.items.find((item) => item.product.id === productId)?.product;
+    if (product) {
+      addOrUpdateCartItem(product, quantity);
+    }
+  };
+
+  return <Cart items={cart?.items || []} onUpdateQuantity={updateQuantity} onRemoveItem={removeCartItem} />;
 }

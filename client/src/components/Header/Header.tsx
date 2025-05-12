@@ -1,10 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Group, Burger, ActionIcon, Text, Flex, Box, Indicator } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-
-interface HeaderProps {
-  cartItemsCount?: number;
-}
+import { useCart } from '../../hooks/useCart';
 
 function CartIcon({ count, onClick }: { count: number; onClick: () => void }) {
   const icon = (
@@ -21,9 +18,11 @@ function CartIcon({ count, onClick }: { count: number; onClick: () => void }) {
   );
 }
 
-export default function Header({ cartItemsCount = 0 }: HeaderProps) {
+export default function Header() {
   const [opened, { toggle }] = useDisclosure(false);
   const navigate = useNavigate();
+  const { cart } = useCart();
+  const cartItemsCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
   const navigateToCart = () => {
     navigate('/cart');

@@ -1,14 +1,18 @@
 import { Container, Title, Text, Loader, Center } from '@mantine/core';
 import { ProductList } from '../components/ProductList/ProductList';
 import { useProducts } from '../hooks/useProducts';
+import { useCart } from '../hooks/useCart';
 import { Product } from '../types/Product';
 
-interface HomePageProps {
-  addToCart: (product: Product) => void;
-}
-
-export default function HomePage({ addToCart }: HomePageProps) {
+export default function HomePage() {
   const { data: products, isLoading, error } = useProducts();
+  const { addOrUpdateCartItem, cart } = useCart();
+
+  const addToCart = (product: Product) => {
+    const existingItem = cart?.items.find((item) => item.product.id === product.id);
+    const quantity = existingItem ? existingItem.quantity + 1 : 1;
+    addOrUpdateCartItem(product, quantity);
+  };
 
   if (isLoading) {
     return (

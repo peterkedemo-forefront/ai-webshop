@@ -70,6 +70,15 @@ client/
 - API calls are done using `fetch` in the `src/api/` folder.
 - Components always use hooks for fetching and mutating data.
 
+## Routing (React Router v6.4+)
+
+- The app uses the object-based router config with `createBrowserRouter` and `RouterProvider`.
+- The main route layout is defined in `src/App.tsx` (renders the header and an `<Outlet />`).
+- All routes are defined in `src/router.tsx`.
+- The router is provided to the app in `src/main.tsx` using `<RouterProvider />`.
+- To add a new page/route, update `src/router.tsx`.
+- **Cart state is accessed via the `useCart` hook in any component/page that needs it. No prop drilling or custom context is required.**
+
 ## Testing
 
 - **Vitest** and **React Testing Library** are used for unit and integration tests.
@@ -95,7 +104,7 @@ client/
 
 ## Common Workflows
 
-- **Add a new page:** Create a new file in `src/pages/` and add a route in `App.tsx`.
+- **Add a new page:** Create a new file in `src/pages/` and add a route in `src/router.tsx`.
 - **Add a new component:** Create a new folder or file in `src/components/`.
 - **Add a new hook:** Place it in `src/hooks/`.
 - **Update types:** Edit or add files in `src/types/`.

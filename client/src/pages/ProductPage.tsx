@@ -1,18 +1,21 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Text, Button, Center, Loader, Flex } from '@mantine/core';
 import { ProductDetail } from '../components/ProductDetail/ProductDetail';
-import { Product } from '../types/Product';
 import { useProduct } from '../hooks/useProduct';
+import { useCart } from '../hooks/useCart';
 
-interface ProductPageProps {
-  addToCart: (product: Product) => void;
-}
-
-export default function ProductPage({ addToCart }: ProductPageProps) {
+export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const { data: product, isLoading, error } = useProduct(id);
+  const { addOrUpdateCartItem, cart } = useCart();
+
+  const addToCart = () => {
+    if (!product) return;
+    const existingItem = cart?.items.find((item) => item.product.id === product.id);
+    const quantity = existingItem ? existingItem.quantity + 1 : 1;
+    addOrUpdateCartItem(product, quantity);
+  };
 
   if (isLoading) {
     return (
