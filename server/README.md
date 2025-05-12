@@ -93,6 +93,69 @@ Creates a new order from a cart and customer information. Validates input with Z
 ### Validation
 - All input is validated with Zod in the controller before processing.
 
+## Admin/Product Management API
+
+### Admin Authentication
+- **Endpoint:** `POST /api/auth/login`
+- **How it works:**
+  - Accepts `{ password: string }` in the request body.
+  - Validates password against the `ADMIN_PASSWORD` in `.env`.
+  - On success, returns a JWT for use in admin requests.
+- **JWT:** Must be included as a Bearer token in the `Authorization` header for all admin/product management endpoints.
+- **Environment Variable:**
+  - `ADMIN_PASSWORD` — required for admin login.
+  - `JWT_SECRET` — used to sign/verify JWTs.
+
+### Product Management Endpoints (Admin Only)
+- All endpoints below require a valid admin JWT.
+
+#### Create Product
+- `POST /api/products`
+- **Body:** `{ name, description, price, imageUrl }`
+- **Response:** Created product object
+
+#### Update Product
+- `PUT /api/products/:id`
+- **Body:** `{ name, description, price, imageUrl }`
+- **Response:** Updated product object
+
+#### Delete Product
+- `DELETE /api/products/:id`
+- **Response:** `{ success: true }`
+
+#### List Products
+- `GET /api/products`
+- **Response:** Array of product objects (public, no auth required)
+
+#### Get Product by ID
+- `GET /api/products/:id`
+- **Response:** Product object (public, no auth required)
+
+### Example: Admin Login
+```sh
+curl -X POST http://localhost:3001/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"password": "<your-admin-password>"}'
+```
+**Response:** `{ "token": "<jwt>" }`
+
+### Example: Authenticated Product Creation
+```sh
+curl -X POST http://localhost:3001/api/products \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <jwt>' \
+  -d '{"name": "Test Product", "description": "Desc", "price": 10, "imageUrl": "..."}'
+```
+
+### Security Notes
+- Only users with the correct admin password (from `.env`) can obtain a JWT and access admin endpoints.
+- JWTs should be kept secret and sent only over HTTPS in production.
+- All input is validated with Zod.
+
+### Developer Notes
+- See `src/routes/`, `src/controllers/`, and `src/middleware/` for implementation details.
+- Update `.env` with `ADMIN_PASSWORD` and `JWT_SECRET` before running in production.
+
 ## Testing
 
 - Tests are written using [Jest](https://jestjs.io/) with [ts-jest](https://kulshekhar.github.io/ts-jest/) for TypeScript support.

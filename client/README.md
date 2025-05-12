@@ -5,6 +5,70 @@
 This is the frontend for the project, built with **React**, **Vite**, and **TypeScript**.  
 It uses [Mantine](https://mantine.dev/) for UI components and styling, and [React Router](https://reactrouter.com/) for routing.
 
+## Admin UI
+
+### Overview
+The Admin UI provides a secure interface for managing products. It is accessible only to authenticated admins and is built using Mantine components for a modern, consistent look.
+
+### Access & Authentication
+- **Route:** `/admin`
+- **Authentication:** JWT-based. Admins log in with a password (stored in backend `.env`).
+- **Login Flow:**
+  - Visit `/admin` to access the login page.
+  - On successful login, a JWT is stored in localStorage and used for all admin API requests.
+  - Logging out clears the JWT and redirects to the login page.
+- **Route Guard:** All `/admin/*` routes except `/admin` require authentication. Unauthenticated users are redirected to `/admin`.
+
+### Admin Routes
+- `/admin` — Login page
+- `/admin/products` — Product list (CRUD actions)
+- `/admin/products/new` — Add new product
+- `/admin/products/:id/edit` — Edit existing product
+
+### Layout
+- Uses Mantine's `AppShell` for a sidebar, header, and main content area.
+- **Responsive:** The sidebar (navbar) is now collapsible on mobile devices. A burger menu in the header toggles the sidebar visibility on small screens.
+- Sidebar navigation for admin sections (currently just Products).
+- Header includes a logout button.
+
+### Product Management Features
+- **List:** View all products in a table with edit/delete actions.
+- **Add:** Create new products via a form with validation.
+- **Edit:** Update existing products via a pre-filled form.
+- **Delete:** Remove products with confirmation modal.
+- All actions provide success/error feedback via notifications.
+
+### Forms & Validation
+- All admin forms use Mantine's `useForm` and [Zod](https://zod.dev/) for schema validation.
+- Forms support both add and edit modes.
+
+### Custom Hooks & Utilities
+- **Authentication:** `useAdminAuth` manages login, logout, and JWT storage.
+- **Route Guard:** `RequireAdmin` component protects admin routes.
+- **Product CRUD:**
+  - `useAdminProducts` — fetch all products
+  - `useCreateProduct` — create product
+  - `useUpdateProduct` — update product
+  - `useDeleteProduct` — delete product
+- **Type Safety:** All hooks and components use a shared `Product` TypeScript interface (`src/types/Product.ts`).
+- **API Helper:** `adminFetch` wraps `fetch` to include JWT and handle errors.
+
+### Notifications & Modals
+- Uses Mantine's notifications for all feedback (success/error).
+- Uses Mantine's `openConfirmModal` for delete confirmations (requires `ModalsProvider` at app root).
+
+### Extending the Admin UI
+- Add new admin sections by creating new routes under `/admin` and updating the sidebar.
+- Use the same authentication and layout patterns for consistency.
+- **If you add new sidebar links, ensure they work with the responsive sidebar and burger menu.**
+- Place new admin hooks in `src/hooks/` and types in `src/types/`.
+- Use Mantine and Zod for all new forms.
+
+### Developer Notes
+- All admin dependencies are in `client/package.json`.
+- See code in `src/pages/admin/`, `src/hooks/`, and `src/types/` for implementation details.
+- For onboarding, see the authentication and product management flows above.
+
 ## Setup
 
 1. **Install dependencies:**
@@ -84,50 +148,4 @@ client/
 - **Vitest** and **React Testing Library** are used for unit and integration tests.
 - **Unit tests for modules (components, hooks, utilities, etc.) should always be placed next to the SUT** (System Under Test), in the same directory as the file being tested (e.g., `useCart.test.ts` next to `useCart.ts`).
 - The `src/__tests__/` directory is reserved for integration tests or special cases that do not fit next to a specific module.
-- Use the custom `render` function from `src/test-utils.tsx` to automatically wrap components in `MantineProvider` for tests. This avoids repeating provider setup in every test.
-- Example usage in a test:
-
-  ```tsx
-  import { render, screen } from '../test-utils';
-  import App from '../App';
-
-  it('renders App', () => {
-    render(<App />);
-    // assertions
-  });
-  ```
-
-- Run all tests with:
-  ```sh
-  npm run test
-  ```
-
-## Common Workflows
-
-- **Add a new page:** Create a new file in `src/pages/` and add a route in `src/router.tsx`.
-- **Add a new component:** Create a new folder or file in `src/components/`.
-- **Add a new hook:** Place it in `src/hooks/`.
-- **Update types:** Edit or add files in `src/types/`.
-
-## Troubleshooting
-
-- If you see a blank page or errors, check the browser console for details.
-- Ensure all dependencies are installed and you are using a compatible Node.js version.
-
-## Data Fetching & State Management
-
-### TanStack Query (React Query)
-
-This project uses [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) (formerly React Query) for all data fetching and server state management in the frontend.
-
-- **Where:** All data fetching and mutations are handled via TanStack Query in custom hooks (e.g., `useProduct`, `useProducts`, `useCart`).
-- **How:**
-  - Use `useQuery` for fetching data (see `src/hooks/useProduct.ts`, `src/hooks/useProducts.ts`).
-  - Use `useMutation` for actions that change data (see `src/hooks/useCart.ts`).
-  - The `QueryClientProvider` is set up in `src/main.tsx`.
-- **Conventions:**
-  - Always use the object syntax for `useQuery` and `useMutation` (see TanStack Query v5 docs).
-  - Use query keys that reflect the resource and parameters (e.g., `['product', id]`).
-  - Invalidate or refetch queries after mutations to keep data in sync.
-  - Prefer colocating data-fetching logic in hooks in `src/hooks/`.
-- **Docs:** See [TanStack Query React Docs](https://tanstack.com/query/latest/docs/framework/react/overview) for more details and advanced usage.
+- Use the custom `render` function from `
