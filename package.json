@@ -5,15 +5,18 @@
   "type": "module",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "e2e"
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace=client\" \"npm run dev --workspace=server\"",
     "build": "cd client && npm run build",
+    "build:all": "npm run build --workspace=client && npm run build --workspace=server",
+    "test": "npm run test --workspaces",
+    "test:e2e:full": "npm run build:all && npm run test:e2e --workspace=e2e",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test": "npm run test --workspaces"
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@types/supertest": "^6.0.3",

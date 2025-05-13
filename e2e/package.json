@@ -1,0 +1,11 @@
+{
+  "name": "e2e",
+  "private": true,
+  "version": "0.0.1",
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  },
+  "scripts": {
+    "test:e2e": "playwright test"
+  }
+}

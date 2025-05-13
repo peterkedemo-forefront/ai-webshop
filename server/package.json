@@ -6,6 +6,7 @@
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:test": "NODE_ENV=test node dist/index.js",
     "test": "jest",
     "seed": "ts-node src/seed.ts"
   },
